@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class ChatComment {
     private Long id; // 채팅 id
-    private ChatRoom chatRoom; // 채팅방 id
+    private ChatRoom chatRoom; // 채팅방 (id)
     private UserAccount userAccount; // 유저 계정 (id)
     private String content; // 본문
     private String parentComment; // 부모 채팅
