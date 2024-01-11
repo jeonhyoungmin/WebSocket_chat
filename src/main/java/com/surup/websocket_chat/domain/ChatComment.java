@@ -7,7 +7,7 @@ public class ChatComment {
     private ChatRoom chatRoom; // 채팅방 (id)
     private UserAccount userAccount; // 유저 계정 (id)
     private String content; // 본문
-    private String parentComment; // 부모 채팅
+    private Long parentComment; // 부모 채팅 id
 
     private LocalDateTime createdAt; // 생성 일시
     private String createdBy; // 생성자
