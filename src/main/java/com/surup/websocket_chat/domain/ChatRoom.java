@@ -4,13 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,9 +16,8 @@ import java.util.Set;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class ChatRoom {
+public class ChatRoom extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 채팅방 id
@@ -40,11 +33,6 @@ public class ChatRoom {
     @OrderBy("id")
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private final Set<ChatComment> chatComments = new LinkedHashSet<>(); // chatRoom에 대한 채팅 내용을 Set에 담기
-
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 생성 일시
-    @CreatedBy @Column(nullable = false, length = 50) private String createdBy; // 생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // 수정 일시
-    @LastModifiedBy @Column(nullable = false, length = 50) private String modifiedBy; // 수정자
 
     protected ChatRoom() {}
 

@@ -4,13 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -20,9 +14,8 @@ import java.util.Objects;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class UserAccount {
+public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
     private String userId; // 유저 id
@@ -33,11 +26,6 @@ public class UserAccount {
     @Setter private String nickname; // 닉네임
     @Setter private String memo; // 메모
 
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 생성 일시
-    @CreatedBy @Column(nullable = false, length = 50) private String createdBy; // 생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // 수정 일시
-    @LastModifiedBy @Column(nullable = false, length = 50) private String modifiedBy; // 수정자
-
     protected UserAccount() {} // Hibernate JPA 기본 생성자 필요
 
     public UserAccount(String userId, String userPassword) {
@@ -45,14 +33,12 @@ public class UserAccount {
         this.userPassword = userPassword;
     }
 
-    private UserAccount(String userId, String userPassword, String email, String nickname, String memo, String createdBy) {
+    private UserAccount(String userId, String userPassword, String email, String nickname, String memo) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.email = email;
         this.nickname = nickname;
         this.memo = memo;
-        this.createdBy = createdBy;
-        this.modifiedBy = createdBy;
     }
 
     public static UserAccount of(String userId, String userPassword) {
@@ -60,11 +46,7 @@ public class UserAccount {
     }
 
     public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo) {
-        return new UserAccount(userId, userPassword, email, nickname, memo, null);
-    }
-
-    public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo, String createdBy) {
-        return new UserAccount(userId, userPassword, email, nickname, memo, createdBy);
+        return new UserAccount(userId, userPassword, email, nickname, memo);
     }
 
     @Override
