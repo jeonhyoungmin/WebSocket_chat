@@ -4,13 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -20,9 +14,8 @@ import java.util.Objects;
         @Index(columnList = "createdAt"),
         @Index(columnList = "createdBy")
 })
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class ChatComment {
+public class ChatComment extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 채팅 id
@@ -32,11 +25,6 @@ public class ChatComment {
     @Setter @Column(updatable = false) private Long parentCommentId; // 부모 채팅 id (채팅 댓글 바로가기 기능)
 
     @Setter @Column(length = 1000) private String content; // 본문
-
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 생성 일시
-    @CreatedBy @Column(nullable = false, length = 50) private String createdBy; // 생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // 수정 일시
-    @LastModifiedBy @Column(nullable = false, length = 50) private String modifiedBy; // 수정자
 
     protected ChatComment() {}
 
