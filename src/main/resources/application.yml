@@ -24,3 +24,6 @@ spring:
   data.rest:
     base-path: /api
     detection-strategy: annotated
+  thymeleaf.cache: false
+  devtools.livereload.enabled: true
+  devtools.remote.restart.enabled: true
