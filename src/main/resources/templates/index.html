@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<input id="content" type="text">
+<button id="send" onclick="sendMessage()">보내기</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    let content = document.getElementById("content");
+
+    window.onload = () => {
+        connect();
+    }
+
+    let sockjs = new SockJS("/chat");
+    let stomp = Stomp.over(sockjs);
+
+    connect = () => {
+        stomp.connect({}, onConnected, onError);
+    };
+
+    onConnected = () => {
+        waitForConnection(stomp, () => {
+            stomp.subscribe("/sub/room", (payload) => {
+                let data = JSON.parse(payload.body);
+                if (data.messageType === "TALK") {
+                    let p = document.createElement("p");
+                    p.innerText = data.content;
+                    document.body.appendChild(p);
+                }
+            });
+
+            stomp.send("/pub/userEnter",
+                {},
+                JSON.stringify({
+                    "roomId": 1,
+                    "messageType": "ENTER",
+                    "userId": "jhm7509"
+                })
+            )
+        })
+    };
+
+    onError = (payload) => {
+        console.log(payload);
+    };
+
+    sendMessage = () => {
+        waitForConnection(stomp, () => {
+            stomp.send("/pub/sendMessage",
+                {},
+                JSON.stringify({
+                    "roomId": 1,
+                    "messageType": "TALK",
+                    "userId": "jhm7509",
+                    "content": content.value
+                })
+            )
+        })
+    }
+
+    waitForConnection = (stomp, callback) => {
+        setTimeout(() => {
+            if (stomp.ws.readyState === 1) {
+                callback();
+            } else {
+                waitForConnection(stomp, callback)
+            }
+        })
+    }
+</script>
+</body>
+</html>
