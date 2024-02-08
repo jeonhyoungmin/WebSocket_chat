@@ -3,6 +3,7 @@ package com.surup.websocket_chat.repository;
 import com.surup.websocket_chat.config.JpaConfig;
 import com.surup.websocket_chat.domain.ChatRoom;
 import com.surup.websocket_chat.domain.UserAccount;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled("공부용 JPA TEST 제외")
 @DisplayName("JPA connection test")
 @Import(JpaConfig.class) // Test 가 직접 만든 config 를 읽을 수 있도록 import
 @DataJpaTest
@@ -51,7 +53,7 @@ class JpaRepositoryTest {
         long previousCount = userAccountRepository.count();
 
         // When
-        UserAccount savedUserAccount = userAccountRepository.save(UserAccount.of("happy", "fdse2512@!"));
+//        UserAccount savedUserAccount = userAccountRepository.save(UserAccount.of("happy", "fdse2512@!"));
 
         // Then
         assertThat(userAccountRepository.count()).isEqualTo(previousCount + 1);

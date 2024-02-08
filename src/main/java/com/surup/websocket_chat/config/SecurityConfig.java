@@ -18,7 +18,7 @@ public class SecurityConfig {
                 .authorizeRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
-                .formLogin(withDefaults())
+                .formLogin(form -> form.loginPage("/login"))
                 .httpBasic(withDefaults())
                 .build();
     }

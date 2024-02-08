@@ -2,6 +2,7 @@ package com.surup.websocket_chat.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -11,54 +12,45 @@ import java.util.Set;
 
 @Getter
 @ToString
-@Table(indexes = {
-        @Index(columnList = "title"),
-        @Index(columnList = "createdAt"),
-        @Index(columnList = "createdBy")
-})
+@NoArgsConstructor
+/*
+    TODO : 사용 여부 검토
+    @Table(indexes = {
+            @Index(columnList = "title"),
+            @Index(columnList = "createdAt")
+    })
+ */
 @Entity
 public class ChatRoom extends AuditingFields {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 채팅방 id
 
-    @Setter
-    @ManyToOne(optional = false) // optional = flase: FK에 not null ddl문 발생
-    private UserAccount userAccount; // 유저 계정 (id)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+    @Setter @ManyToOne(optional = false) private UserAccount userAccount;
+    @Setter @Column(nullable = false, length = 50) private String nickname;
+    @Setter @Column(nullable = false) private String title;
+    @Setter @Column(length = 100) private String password;
+    @Setter @Column(nullable = false) private Integer count;
 
-    @Setter private String title; // 채팅방 제목
-    @Setter private String password; // 채팅방 암호
-
-    // @ToString.Exclude TODO: 미적용해도 괜찮은지 체크
+    @ToString.Exclude
     @OrderBy("id")
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private final Set<ChatComment> chatComments = new LinkedHashSet<>(); // chatRoom에 대한 채팅 내용을 Set에 담기
+    private final Set<ChatComment> chatComments = new LinkedHashSet<>();
 
-    protected ChatRoom() {}
-
-    private ChatRoom(UserAccount userAccount, String title, String password) {
+    public ChatRoom(UserAccount userAccount, String nickname, String title, String password) {
         this.userAccount = userAccount;
+        this.nickname = nickname;
         this.title = title;
         this.password = password;
     }
 
-    public static ChatRoom of(UserAccount userAccount) {
-        return new ChatRoom(userAccount, "", ""); // TODO: 방 이름을 설정하지 않으면, userId로 설정되도록 변경
-    }
-
-    public static ChatRoom of(UserAccount userAccount, String title) {
-        return new ChatRoom(userAccount, title, "");
-    }
-
-    public static ChatRoom of(UserAccount userAccount, String title, String password) {
-        return new ChatRoom(userAccount, title, password);
+    public static ChatRoom of(UserAccount userAccount, String nickname, String title, String password) {
+        return new ChatRoom(userAccount, nickname, title, password);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ChatRoom chatRoom)) return false;  // pattern variable 적용
-        return id != null && id.equals(chatRoom.id); // 영속화되지 않은 entity는 모든 동등성 검사를 탈락한다.
+        if (!(o instanceof ChatRoom chatRoom)) return false;
+        return id != null && id.equals(chatRoom.id);
     }
 
     @Override
