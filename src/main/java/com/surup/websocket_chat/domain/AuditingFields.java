@@ -20,21 +20,25 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class AuditingFields {
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt; // 생성 일시
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  @CreatedDate
+  @Column(nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
+
+  /*
+    TODO : 사용 가능성 검토
     @CreatedBy
     @Column(nullable = false, updatable = false, length = 50)
-    private String createdBy; // 생성자
+    private String createdBy;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
     @Column(nullable = false)
-    private LocalDateTime modifiedAt; // 수정 일시
+    private LocalDateTime modifiedAt;
 
     @LastModifiedBy
     @Column(nullable = false, length = 50)
-    private String modifiedBy; // 수정자
+    private String modifiedBy;
+  */
 }
