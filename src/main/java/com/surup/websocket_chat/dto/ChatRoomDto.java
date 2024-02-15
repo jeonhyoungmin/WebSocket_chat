@@ -5,21 +5,23 @@ import com.surup.websocket_chat.domain.ChatRoom;
 import java.time.LocalDateTime;
 
 public record ChatRoomDto(
-    String userId,
+        Long id,
+    String userName,
     String nickname,
     String title,
     String password,
     Integer count,
     LocalDateTime createdAt
 ) {
-    public static ChatRoomDto of(String userId, String nickname, String title, String password, Integer count, LocalDateTime createdAt) {
-        return new ChatRoomDto(userId, nickname, title, password, count, createdAt);
+    public static ChatRoomDto of(Long id, String userName, String nickname, String title, String password, Integer count, LocalDateTime createdAt) {
+        return new ChatRoomDto(id, userName, nickname, title, password, count, createdAt);
     }
 
     public static ChatRoomDto from(ChatRoom chatRoom) {
         return ChatRoomDto.of(
-                chatRoom.getUserAccount().getUserId(),
-                chatRoom.getNickname(),
+                chatRoom.getId(),
+                chatRoom.getUserAccount().getUserName(),
+                chatRoom.getUserAccount().getNickname(),
                 chatRoom.getTitle(),
                 chatRoom.getPassword(),
                 chatRoom.getCount(),
