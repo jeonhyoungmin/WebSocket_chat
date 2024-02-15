@@ -1,5 +1,6 @@
 package com.surup.websocket_chat.domain;
 
+import com.surup.websocket_chat.repository.ChatCommentRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import java.util.Objects;
 
 @Getter
 @ToString
-@NoArgsConstructor
 /*
     TODO : 사용 여부 검토
     @Table(indexes = {
@@ -22,20 +22,20 @@ import java.util.Objects;
 public class ChatComment extends AuditingFields {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
-    @Setter @ManyToOne(optional = false) private ChatRoom chatRoom;
-    @Setter @ManyToOne(optional = false) private UserAccount userAccount;
-    @Setter @Column(nullable = false, length = 50) String nickname;
+    @Setter @JoinColumn(name = "roomId") @ManyToOne(optional = false, fetch = FetchType.LAZY) private ChatRoom chatRoom;
+    @Setter @JoinColumn(name = "userId") @ManyToOne(optional = false, fetch = FetchType.LAZY) private UserAccount userAccount;
     @Setter @Column(nullable = false, length = 1000) private String content;
 
-    public ChatComment(ChatRoom chatRoom, UserAccount userAccount, String nickname, String content) {
+    protected ChatComment(){}
+
+    protected ChatComment(ChatRoom chatRoom, UserAccount userAccount, String content) {
         this.chatRoom = chatRoom;
         this.userAccount = userAccount;
-        this.nickname = nickname;
         this.content = content;
     }
 
-    public static ChatComment of(ChatRoom chatRoom, UserAccount userAccount, String nickname, String content) {
-        return new ChatComment(chatRoom, userAccount, nickname, content);
+    public static ChatComment of(ChatRoom chatRoom, UserAccount userAccount, String content) {
+        return new ChatComment(chatRoom, userAccount, content);
     }
 
     @Override
