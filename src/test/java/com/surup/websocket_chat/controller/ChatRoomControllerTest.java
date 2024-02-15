@@ -13,16 +13,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ChatController.class)
+@WebMvcTest(ChatRoomController.class)
 @WithMockUser("user1") // spring security 에 인증된 사용자 추가하여 unauthorized error 회피
-class ChatControllerTest {
+class ChatRoomControllerTest {
 
     private final MockMvc mvc;
 
     @MockBean
     ChatRoomService chatRoomService;
 
-    public ChatControllerTest(@Autowired MockMvc mvc) {
+    public ChatRoomControllerTest(@Autowired MockMvc mvc
+    ) {
         this.mvc = mvc;
     }
 
@@ -42,15 +43,18 @@ class ChatControllerTest {
 
     @DisplayName("[view][GET] 채팅방 요청 시, 채팅방 id 일치하는 채팅방으로 이동")
     @Test
-    void givenChatRoomIdAndPassword_whenChatRoomURIRequest_thenReturnsViewChatRoomWithChatRoom() throws Exception {
+    void givenChatRoomIdAndPassword_whenChatRoomURIRequest_thenReturnsViewChatRoomWithIDMatchingChatRoom() throws Exception {
         // Given
 
         // When & Then
         mvc.perform(get("/chatRoom")
                         .queryParam("id", "1")
-                        .queryParam("password", "password")
                 )
                 .andExpect(status().isOk())
+                .andExpect(view().name("chatRoom"))
+                .andExpect(model().hasNoErrors())
+                .andExpect(model().attributeExists("chatRoomId"))
                 .andDo(print());
     }
+
 }

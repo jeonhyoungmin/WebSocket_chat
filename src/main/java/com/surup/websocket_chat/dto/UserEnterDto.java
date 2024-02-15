@@ -5,9 +5,9 @@ import com.surup.websocket_chat.constant.MessageType;
 public record UserEnterDto(
         MessageType messageType,
         Long roomId,
-        String userId
+        String userName
 ) {
-    public static UserEnterDto of(MessageType messageType, Long roomId, String userId) {
-        return new UserEnterDto(messageType, roomId, userId);
+    public static UserEnterDto of(MessageType messageType, Long roomId, String userName) {
+        return new UserEnterDto(messageType, roomId, userName);
     }
 }

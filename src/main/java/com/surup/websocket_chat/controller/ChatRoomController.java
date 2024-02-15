@@ -14,7 +14,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
-public class ChatController {
+public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
@@ -29,11 +29,9 @@ public class ChatController {
         return new ModelAndView("chatRoomList", map);
     }
 
-    // TODO : room_id 와 password 에 맞는 채팅방으로 이동시키기
     @GetMapping("/chatRoom")
-    public ModelAndView chatRoom(@RequestParam("id") Long id,
-                                 @RequestParam(value = "password", defaultValue = "") String password) {
-        chatRoomService.isValid(id, password);
+    public ModelAndView chatRoom(@RequestParam("id") Long id) {
+        // TODO: 검증을 api 에서 진행한 후, redirection 으로 뷰 페이지 보여주기
         Map<String, Object> map = new HashMap<>();
         map.put("chatRoomId", id);
         return new ModelAndView("chatRoom", map);
