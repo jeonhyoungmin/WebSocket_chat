@@ -20,6 +20,11 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 100
+    open-in-view: false # return connection before response
   sql.init.mode: always # data sql: always(service), embedded(embedded db), none
   spring.h2.console.enabled: false
   thymeleaf.cache: false # production: auto remove
+
+# spring security
+#spring.security.user.name: id1
+#spring.security.user.password: ThisIsPassword

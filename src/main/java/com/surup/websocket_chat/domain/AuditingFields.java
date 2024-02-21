@@ -27,7 +27,7 @@ public class AuditingFields {
 
 
   /*
-    TODO : 사용 가능성 검토
+    TODO : 사용 여부 검토
     @CreatedBy
     @Column(nullable = false, updatable = false, length = 50)
     private String createdBy;

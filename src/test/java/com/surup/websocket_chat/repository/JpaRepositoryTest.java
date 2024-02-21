@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Disabled("공부용 JPA TEST 제외")
-@DisplayName("JPA connection test")
+@DisplayName("레포지토리 - JPA 테스트")
 @Import(JpaConfig.class) // Test 가 직접 만든 config 를 읽을 수 있도록 import
 @DataJpaTest
 class JpaRepositoryTest {
@@ -46,7 +46,7 @@ class JpaRepositoryTest {
                 .hasSize(30);
     }
 
-    @DisplayName("insert test")
+    @DisplayName("Insert Test")
     @Test
     void givenTestData_whenInserting_thenWorksFine() {
         // Given
@@ -59,11 +59,11 @@ class JpaRepositoryTest {
         assertThat(userAccountRepository.count()).isEqualTo(previousCount + 1);
     }
 
-    @DisplayName("update test")
+    @DisplayName("Update Test")
     @Test
     void givenTestData_whenUpdating_thenWorksFine() {
         // Given
-        UserAccount userAccount = userAccountRepository.findById("Florence").orElseThrow();
+        UserAccount userAccount = userAccountRepository.findById(1L).orElseThrow();
         String updateNickName = "happyhappy";
         userAccount.setNickname(updateNickName);
 
@@ -74,7 +74,7 @@ class JpaRepositoryTest {
         assertThat(savedUserAccount).hasFieldOrPropertyWithValue("nickname", "happyhappy");
     }
 
-    @DisplayName("delete test")
+    @DisplayName("Delete Test")
     @Test
     void givenTestData_whenDeleting_thenWorksFine() {
         // Given

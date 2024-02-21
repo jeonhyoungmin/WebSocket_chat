@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
   @WithMockUser("user1")            - spring security 에 인증된 사용자 추가하여 unauthorized error 회피
   적용한 설정                         - spring security 설정 제외
  */
+@DisplayName("컨트롤러 - 메인")
 @WebMvcTest(value = MainController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class // spring security 의 기본 설정을 적용해주는 설정 제외
         // excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class))
@@ -28,7 +29,7 @@ class MainControllerTest {
     this.mvc = mvc;
   }
 
-  @DisplayName("[view][GET] 루트 URI 요청 시, /chatRoomList 로 redirection")
+  @DisplayName("[VIEW][GET] 루트 URI 요청 시, /chatRoomList 로 redirection")
   @Test
   void givenNothing_whenRootURIRequest_thenReturnRedirectingChatRoomList() throws Exception {
     // Given

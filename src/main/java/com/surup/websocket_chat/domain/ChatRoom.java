@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -19,6 +21,7 @@ import java.util.Set;
             @Index(columnList = "createdAt")
     })
  */
+@DynamicInsert
 @Entity
 public class ChatRoom extends AuditingFields {
 
@@ -26,7 +29,7 @@ public class ChatRoom extends AuditingFields {
     @Setter @JoinColumn(name = "userId") @ManyToOne(optional = false, fetch = FetchType.LAZY) private UserAccount userAccount;
     @Setter @Column(nullable = false) private String title;
     @Setter @Column(length = 100) private String password;
-    @Setter @Column(nullable = false) private Integer count;
+    @Setter @ColumnDefault("0") private Integer count;
 
     @ToString.Exclude
     @OrderBy("id")
