@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Error</title>
 </head>
 <body>
-    에러 페이지
+에러 페이지
+<div>
+    <span th:text="${statusCode}"></span>
+</div>
+<div>
+    <span th:text="${errorCode}"></span>
+</div>
+<div>
+    <span th:text="${message}"></span>
+</div>
 <script>
 
 </script>
