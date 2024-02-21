@@ -1,16 +1,22 @@
 package com.surup.websocket_chat.controller;
 
-import com.surup.websocket_chat.dto.ChatRoomResponse;
+import com.surup.websocket_chat.dto.UserAccountDto;
+import com.surup.websocket_chat.dto.request.ChatRoomPasswordRequest;
+import com.surup.websocket_chat.dto.request.CreateChatRoomRequest;
+import com.surup.websocket_chat.dto.response.ChatRoomResponse;
 import com.surup.websocket_chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
@@ -19,21 +25,41 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @GetMapping("/chatRoomList")
-    public ModelAndView chatRoomList() {
-        List<ChatRoomResponse> chatRoom = chatRoomService.getChatRoomList()
-                .stream()
-                .map(ChatRoomResponse::from)
-                .toList();
-        Map<String, Object> map = new HashMap<>();
-        map.put("chatRoom", chatRoom);
-        return new ModelAndView("chatRoomList", map);
+    public String chatRoomList(
+            @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
+            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, // 기본값 표시
+            Model model
+    ) {
+        List<ChatRoomResponse> chatRoomList = chatRoomService.getChatRoomList(searchValue, pageable);
+        model.addAttribute("chatRoomList", chatRoomList);
+        return "/chatRoomList";
     }
 
-    @GetMapping("/chatRoom")
-    public ModelAndView chatRoom(@RequestParam("id") Long id) {
-        // TODO: 검증을 api 에서 진행한 후, redirection 으로 뷰 페이지 보여주기
-        Map<String, Object> map = new HashMap<>();
-        map.put("chatRoomId", id);
-        return new ModelAndView("chatRoom", map);
+    @PostMapping("/enterChatRoom")
+    public String enterChatRoom(ChatRoomPasswordRequest chatRoomPasswordRequest,
+                                @AuthenticationPrincipal UserAccountDto userAccountDto,
+                                Model model
+    ) {
+        chatRoomService.isValid(chatRoomPasswordRequest);
+        model.addAttribute("chatRoomId", chatRoomPasswordRequest.id());
+        model.addAttribute("userNickname", userAccountDto.nickname());
+        return "/chatRoom";
     }
+
+    /*
+        유효성 메인 검사 = client
+        server 에서 유효성 검사 문제 시, error 페이지로 이동시킨다.
+     */
+    @PostMapping("/createChatRoom")
+    public String createChatRoom(CreateChatRoomRequest createChatRoomRequest, // @ModelAttribute 생략 가능
+                                 @AuthenticationPrincipal UserAccountDto userAccountDto,
+                                 Model model
+    ) {
+        ChatRoomResponse chatRoomResponse = ChatRoomResponse
+                .from(chatRoomService.createChatRoom(createChatRoomRequest, userAccountDto.id()));
+        model.addAttribute("chatRoomId", chatRoomResponse.id());
+        model.addAttribute("userNickname", chatRoomResponse.nickname());
+        return "/chatRoom";
+    }
+
 }
