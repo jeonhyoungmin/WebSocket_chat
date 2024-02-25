@@ -5,7 +5,9 @@ import com.surup.websocket_chat.dto.request.ChatRoomPasswordRequest;
 import com.surup.websocket_chat.dto.request.CreateChatRoomRequest;
 import com.surup.websocket_chat.dto.response.ChatRoomResponse;
 import com.surup.websocket_chat.service.ChatRoomService;
+import com.surup.websocket_chat.service.PaginationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -23,16 +25,21 @@ import java.util.List;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
+    private final PaginationService paginationService;
 
     @GetMapping("/chatRoomList")
     public String chatRoomList(
             @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
-            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, // 기본값 표시
+            @PageableDefault(size = 10, page = 0, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        List<ChatRoomResponse> chatRoomList = chatRoomService.getChatRoomList(searchValue, pageable);
+        Page<ChatRoomResponse> chatRoomList = chatRoomService.getChatRoomList(searchValue, pageable);
+        List<Integer> barNumbers = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), chatRoomList.getTotalPages());
+
         model.addAttribute("chatRoomList", chatRoomList);
-        return "/chatRoomList";
+        model.addAttribute("paginationBarNumbers", barNumbers);
+        model.addAttribute("searchValue", searchValue);
+        return "chatRoomList/chatRoomList";
     }
 
     @PostMapping("/enterChatRoom")
@@ -43,7 +50,7 @@ public class ChatRoomController {
         chatRoomService.isValid(chatRoomPasswordRequest);
         model.addAttribute("chatRoomId", chatRoomPasswordRequest.id());
         model.addAttribute("userNickname", userAccountDto.nickname());
-        return "/chatRoom";
+        return "chatRoom/chatRoom";
     }
 
     /*
@@ -59,7 +66,7 @@ public class ChatRoomController {
                 .from(chatRoomService.createChatRoom(createChatRoomRequest, userAccountDto.id()));
         model.addAttribute("chatRoomId", chatRoomResponse.id());
         model.addAttribute("userNickname", chatRoomResponse.nickname());
-        return "/chatRoom";
+        return "chatRoom/chatRoom";
     }
 
 }
