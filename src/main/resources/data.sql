@@ -24,3 +24,4 @@ insert into chat_room (id, user_id, title, password, count, created_at) values (
 insert into chat_room (id, user_id, title, password, count, created_at) values (9, 9, '채팅방 제목 9', '채팅방 비번 9', 1, '2023-06-23 19:48:54');
 insert into chat_room (id, user_id, title, password, count, created_at) values (10, 10, '채팅방 제목 10', '채팅방 비번 10', 1, '2023-06-24 19:48:54');
 insert into chat_room (id, user_id, title, password, count, created_at) values (11, 11, '채팅방 제목 11', '채팅방 비번 11', 1, '2023-06-25 19:48:54');
+insert into chat_room (id, user_id, title, password, count, created_at) values (12, 12, '비번 없는 방', '', 1, '2023-06-25 19:48:54');
