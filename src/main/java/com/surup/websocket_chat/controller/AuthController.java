@@ -16,18 +16,18 @@ public class AuthController {
 
   @GetMapping("/login")
   public String login() {
-    return "login/login";
+    return "login";
   }
 
   @GetMapping("/signup")
   public String signup() {
-    return "signup/signup";
+    return "signup";
   }
 
   @PostMapping("/signup")
   public String signup(@Valid UserRegisterRequest userRegisterDto) {
     userAccountService.createUser(userRegisterDto);
-    return "login/login";
+    return "login";
   }
 
 }
