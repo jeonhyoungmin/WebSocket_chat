@@ -38,7 +38,7 @@ class ChatRoomServiceTest {
                 .willReturn(Page.empty());
 
         // When
-        List<ChatRoomResponse> chatRoomList = chatRoomService.getChatRoomList(searchValue, pageable);
+        Page<ChatRoomResponse> chatRoomList = chatRoomService.getChatRoomList(searchValue, pageable);
 
         // Then
         assertThat(chatRoomList).isEmpty();

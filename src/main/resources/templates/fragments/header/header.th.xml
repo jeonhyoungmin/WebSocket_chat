@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<thlogic>
+  <attr sel="#header" th:fragment="header" />
+  <attr sel="#home" th:href="@{/chatRoomList}" />
+  <attr sel="#github" th:href="@{https://github.com/jeonhyoungmin/WebSocket_chat}" />
+  <attr sel="#login" sec:authorize="!isAuthenticated()" th:href="@{/login}" />
+  <attr sel="#username" sec:authorize="isAuthenticated()" sec:authentication="principal.nickname" />
+  <attr sel="#signup" sec:authorize="!isAuthenticated()" th:href="@{/signup}" />
+  <attr sel="#logout" sec:authorize="isAuthenticated()" th:href="@{/logout}" />
+</thlogic>

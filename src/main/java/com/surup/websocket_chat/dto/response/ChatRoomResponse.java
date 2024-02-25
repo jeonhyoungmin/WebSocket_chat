@@ -18,7 +18,7 @@ public record ChatRoomResponse(
 
     public static ChatRoomResponse from(ChatRoomDto chatRoomDto) {
         Boolean isEncrypted = false;
-        if (chatRoomDto.password() != null || !chatRoomDto.password().equals("")) {
+        if (!chatRoomDto.password().equals("")) {
             isEncrypted = true;
         }
         return ChatRoomResponse.of(

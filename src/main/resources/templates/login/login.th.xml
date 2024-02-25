@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<thlogic>
+  <attr sel="#login-form" th:action="@{/login}" />
+  <attr sel="#signup-button" th:href="@{/signup}" />
+</thlogic>

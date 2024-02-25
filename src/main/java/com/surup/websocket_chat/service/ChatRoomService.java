@@ -11,6 +11,7 @@ import com.surup.websocket_chat.exception.BaseException;
 import com.surup.websocket_chat.repository.ChatRoomRepository;
 import com.surup.websocket_chat.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +27,11 @@ public class ChatRoomService {
     private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
-    public List<ChatRoomResponse> getChatRoomList(String searchValue, Pageable pageable) {
+    public Page<ChatRoomResponse> getChatRoomList(String searchValue, Pageable pageable) {
         return chatRoomRepository
                 .findByTitleContainingIgnoreCaseOrUserAccount_NicknameContainingIgnoreCase(searchValue, searchValue, pageable)
-                .stream()
                 .map(ChatRoomDto::from)
-                .map(ChatRoomResponse::from)
-                .toList();
+                .map(ChatRoomResponse::from);
     }
 
     @Transactional(readOnly = true)

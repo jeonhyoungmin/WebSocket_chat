@@ -50,7 +50,7 @@ class AuthControllerTest {
                         .with(csrf())
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("login"))
+                .andExpect(view().name("login/login"))
                 .andDo(print());
     }
 

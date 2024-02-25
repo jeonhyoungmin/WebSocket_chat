@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="surup">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>채팅방 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/table.css}">
+    <link rel="stylesheet" th:href="@{/css/searchbar.css}">
+    <style>
+
+    </style>
+</head>
+<body>
+
+<header></header>
+
+<!-- 검색바 -->
+<div class="container">
+    <div class="row justify-content-center mb-3">
+        <div class="col-12 card-margin">
+            <div class="card search-form">
+                <div class="card-body p-0">
+                    <form id="search-form" method="get">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-8 col-md-7 col-sm-7 p-0">
+                                        <input type="text" placeholder="Search..." class="form-control" id="search"
+                                               name="searchValue">
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-1 p-0">
+                                        <button type="submit" class="btn btn-base">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-search">
+                                                <circle cx="11" cy="11" r="8"></circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Button trigger modal -->
+                                    <div class="col-lg-3 col-md-3 col-sm-4 p-0">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#create-chat-room-modal">
+                                            방 만들기
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 채팅방 목록 -->
+<div class="container bootstrap snippets bootdey">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="main-box no-header clearfix">
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <table id="table" class="table user-list">
+                            <thead>
+                            <tr>
+                                <th><a>채팅방</a></th>
+                                <th class="text-center"><a>참여 인원</a></th>
+                                <th class="text-center"><a>방장</a></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr onclick="clickChatRoom(this)" style="cursor: pointer" data-bs-toggle="modal" data-bs-target="#enter-chat-room-modal">
+                                <td>
+                                    <span id="title" class="user-subhead">채팅방 제목 1</span>
+                                </td>
+                                <td class="text-center">
+                                    <span id="count" class="label label-default">5</span>
+                                </td>
+                                <td class="text-center">
+                                    <span id="nickname">방장 닉네임 1</span>
+                                </td>
+                                <td class="text-center">
+                                    <span id="is-encrypted" hidden>암호화 여부</span>
+                                </td>
+                                <td class="text-center">
+                                    <span id="room-id" hidden>채팅방 id</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="user-subhead">채팅방 제목 2</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="label label-success">30</span>
+                                </td>
+                                <td class="text-center">
+                                    <span>방장 닉네임 2</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="user-subhead">채팅방 제목 3</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="label label-danger">5</span>
+                                </td>
+                                <td class="text-center">
+                                    <span>방장 닉네임 3</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <nav id="pagination" class="d-flex justify-content-center mb-3">
+        <ul class="pagination pagination-base pagination-boxed pagination-square mb-0">
+            <li class="page-item">
+                <a class="page-link">
+                    <span aria-hidden="true">«</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link">1</a></li>
+            <li class="page-item">
+                <a class="page-link">
+                    <span aria-hidden="true">»</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+
+<!-- create chat room modal -->
+<div class="modal fade" id="create-chat-room-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="create-chat-room-modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="create-chat-room-modalLabel">채팅방 만들기</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="create-form" method="post">
+                <div class="modal-body">
+                    <div>
+                        <input type="text" placeholder="채팅방 이름" class="form-control"
+                               name="title">
+                    </div>
+                    <div>
+                        <input type="password" placeholder="비밀번호" class="form-control"
+                               name="password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-primary">생성</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- enter chat room modal -->
+<div class="modal fade" id="enter-chat-room-modal" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="enter-chat-room-modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="enter-chat-room-modalLabel">채팅방 입장하기</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="enter-form" method="post">
+                <div class="modal-body">
+                    <div>
+                        <span id="enter-form-name"></span>
+                    </div>
+                    <div>
+                        <input id="enter-form-id" name="id" type="hidden"/>
+                    </div>
+                    <div>
+                        <input id="enter-form-password" type="password" placeholder="비밀번호" class="form-control"
+                               name="password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="submit" class="btn btn-primary">입장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+<script>
+    const enterChatRoomName = document.getElementById("enter-form-name")
+    const enterChatRoomId = document.getElementById("enter-form-id")
+    const enterChatRoomPassword = document.getElementById("enter-form-password")
+
+    const clickChatRoom = (node) => {
+        enterChatRoomPassword.type = "password"
+        enterChatRoomName.innerText = node.attributes.getNamedItem("data-title").value
+        enterChatRoomId.value = node.attributes.getNamedItem("data-id").value
+        if(node.attributes.getNamedItem("data-encrypted").value === "false"){
+            enterChatRoomPassword.type = "hidden"
+        }
+    }
+</script>
+</body>
+</html>
