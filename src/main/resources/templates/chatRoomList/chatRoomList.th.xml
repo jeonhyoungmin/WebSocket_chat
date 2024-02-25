@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<thlogic>
+    <!-- search bar -->
+    <attr sel="#search-form" th:action="@{/chatRoomList}">
+        <attr sel="#search" th:value="${param.searchValue}"/>
+    </attr>
+
+    <!-- modal create chat room -->
+    <attr sel="#create-form" th:action="@{/createChatRoom}"/>
+
+    <!-- modal enter chat room -->
+    <attr sel="#enter-form" th:action="@{/enterChatRoom}"/>
+
+    <!-- chat room list table head -->
+    <attr sel="#table">
+        <attr sel="thead/tr">
+            <attr sel="th[0]/a" th:href="@{/chatRoomList(
+                page=${chatRoomList.getNumber()},
+                sort='title' + (${chatRoomList.getSort().getOrderFor('title')} != null ?
+                (${chatRoomList.getSort().getOrderFor('title').getDirection().name()} == 'DESC' ? ',ASC' : ',DESC') : '' ),
+                searchValue=${param.searchValue}
+            )}"/>
+            <attr sel="th[1]/a" th:href="@{/chatRoomList(
+                page=${chatRoomList.getNumber()},
+                sort='count' + (${chatRoomList.getSort().getOrderFor('count')} != null ?
+                (${chatRoomList.getSort().getOrderFor('count').getDirection().name()} == 'DESC' ? ',ASC' : ',DESC') : '' ),
+                searchValue=${param.searchValue}
+            )}"/>
+            <attr sel="th[2]/a" th:href="@{/chatRoomList(
+                page=${chatRoomList.getNumber()},
+                sort='userAccount' + (${chatRoomList.getSort().getOrderFor('userAccount')} != null ?
+                (${chatRoomList.getSort().getOrderFor('userAccount').getDirection().name()} == 'DESC' ? ',ASC' : ',DESC') : '' ),
+                searchValue=${param.searchValue}
+            )}"/>
+        </attr>
+    </attr>
+
+    <!-- chat room list table -->
+    <attr sel="header" th:replace="~{fragments/header/header :: header}"/>
+    <attr sel="tbody" th:remove="all-but-first" th:each="chatRoom : ${chatRoomList}">
+        <attr sel="tr[0]" data-th-data-id="${chatRoom.id()}" data-th-data-title="${chatRoom.title()}" data-th-data-encrypted="${chatRoom.isEncrypted()}">
+            <attr sel="#title" th:text="${chatRoom.title()}"/>
+            <attr sel="#count" th:text="${chatRoom.count()}"/>
+            <attr sel="#nickname" th:text="${chatRoom.nickname()}"/>
+        </attr>
+    </attr>
+
+    <!-- pagination -->
+    <attr sel="#pagination">
+        <attr sel="li[0]/a"
+              th:href="@{/chatRoomList(page=${chatRoomList.getNumber() - 1}, sort=${param.sort}, searchValue=${param.searchValue})}"
+              th:class="'page-link ' + (${chatRoomList.getNumber()} <= 0 ? 'disabled' : '')"
+        >
+        </attr>
+        <attr sel="li[1]" th:each="pageNumber: ${paginationBarNumbers}">
+            <attr sel="a"
+                  th:text="${pageNumber + 1}"
+                  th:href="@{/chatRoomList(page=${pageNumber}, sort=${param.sort}, searchValue=${param.searchValue})}"
+                  th:class="'page-link ' + (${pageNumber} == ${chatRoomList.getNumber()} ? 'active' : '')"
+            />
+        </attr>
+        <attr sel="li[2]/a"
+              th:href="@{/chatRoomList(page=${chatRoomList.getNumber() + 1}, sort=${param.sort}, searchValue=${param.searchValue})}"
+              th:class="'page-link ' + (${chatRoomList.getNumber()} == ${chatRoomList.getTotalPages() - 1} ? 'disabled' : '')"
+        >
+        </attr>
+    </attr>
+</thlogic>
