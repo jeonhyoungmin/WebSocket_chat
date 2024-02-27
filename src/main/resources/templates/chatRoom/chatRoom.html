@@ -1,72 +1,139 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="surup">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Chat Room</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/chatRoom.css}">
 </head>
 <body>
-    채팅방 페이지
-    <span th:text="${chatRoomId}"></span>
-    <span th:text="${userNickname}"></span>
-<input id="content" type="text">
-<button id="send" onclick="sendMessage()">보내기</button>
+
+<div class="container bootstrap snippets bootdeys justify-content-center align-content-center">
+    <div class="col-md-12 col-xs-12 col-md-offset-2">
+        <!-- Panel Chat -->
+        <div class="panel" id="chat">
+            <div class="panel-heading col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row justify-content-between">
+                <h2 class="panel-title col-xl-10 col-lg-10 col-md-10 col-sm-9 col-8">
+                    <i class="icon wb-chat-text" aria-hidden="true">Chat</i>
+                </h2>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-4 row">
+                    <button type="button" class="btn btn-primary" onclick="leaveRoom()">나가기</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="chats" class="chats">
+                    <!-- chatting contents append -->
+                </div>
+            </div>
+            <div class="panel-footer fixed-bottom">
+                <div class="input-group">
+                    <input id="content" type="text" class="form-control" placeholder="Say something">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" onclick="sendMessage()">Send</button></span>
+                </div>
+            </div>
+        </div>
+        <!-- End Panel Chat -->
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script>
-    let content = document.getElementById("content");
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+<script th:inline="javascript">
+    const chats = document.getElementById("chats");
+    const content = document.getElementById("content");
+
+    const chatRoomId = [[${chatRoomId}]]
+    const nickname = [[${userNickname}]]
 
     window.onload = () => {
         connect();
     }
 
+    content.addEventListener('keydown', (event) => {
+        if (event.defaultPrevented) {
+            return;
+        }
+        if (event.key === 'Enter') {
+            sendMessage()
+            event.preventDefault()
+        }
+    })
+
     let sockjs = new SockJS("/chat");
     let stomp = Stomp.over(sockjs);
 
-    connect = () => {
+    const connect = () => {
         stomp.connect({}, onConnected, onError);
     };
 
-    onConnected = () => {
+    const onConnected = () => {
         waitForConnection(stomp, () => {
-            stomp.subscribe("/sub/room", (payload) => {
+            stomp.subscribe("/sub/room/" + chatRoomId, (payload) => {
                 let data = JSON.parse(payload.body);
-                if (data.messageType === "TALK") {
-                    let p = document.createElement("p");
-                    p.innerText = data.content;
-                    document.body.appendChild(p);
+                if (data.messageType === "ENTER") {
+                    appendENTER(data.nickname);
+                } else if (data.messageType === "TALK") {
+                    appendTALK(data.nickname, data.content);
+                } else if (data.messageType === "LEAVE") {
+                    appendLEAVE(data.nickname);
                 }
             });
 
             stomp.send("/pub/userEnter",
                 {},
                 JSON.stringify({
-                    "roomId": 1,
+                    "id": chatRoomId,
                     "messageType": "ENTER",
-                    "userId": "jhm7509"
+                    "nickname": nickname
                 })
             )
         })
     };
 
-    onError = (payload) => {
+    const onError = (payload) => {
         console.log(payload);
     };
 
-    sendMessage = () => {
+    const sendMessage = () => {
         waitForConnection(stomp, () => {
             stomp.send("/pub/sendMessage",
                 {},
                 JSON.stringify({
-                    "roomId": 1,
+                    "id": chatRoomId,
                     "messageType": "TALK",
-                    "userId": "jhm7509",
+                    "nickname": nickname,
                     "content": content.value
                 })
             )
+            content.value = ''
         })
     }
 
-    waitForConnection = (stomp, callback) => {
+    const leaveRoom = () => {
+        waitForConnection(stomp, () => {
+            stomp.send("/pub/leaveMessage",
+                {},
+                JSON.stringify({
+                    "id": chatRoomId,
+                    "messageType": "LEAVE",
+                    "nickname": nickname,
+                })
+            )
+        stomp.disconnect();
+        })
+        window.history.back();
+    }
+
+    <!-- wait websocket stomp connection -->
+    const waitForConnection = (stomp, callback) => {
         setTimeout(() => {
             if (stomp.ws.readyState === 1) {
                 callback();
@@ -74,6 +141,47 @@
                 waitForConnection(stomp, callback)
             }
         })
+    }
+
+
+
+
+    <!-- chat box html -->
+    const appendENTER = (enterUserNickname) => {
+        let temp = document.createElement("div")
+        temp.className = "row justify-content-center";
+        temp.innerText = enterUserNickname + " 님이 입장하셨습니다."
+        chats.append(temp);
+    }
+
+    const appendTALK = (senderNickname, receive) => {
+        let temp = document.createElement("div");
+
+        if(senderNickname === nickname) {
+            senderNickname = "";
+            temp.className = "chat";
+        } else {
+            temp.className = "chat chat-left";
+        }
+
+        let str = "<div class='chat-avatar'>";
+        str += "<div class='row justify-content-end'>" + senderNickname + "</div>";
+        str += "</div>";
+        str += "<div class='chat-body'>";
+        str += "<div class='chat-content'>";
+        str += "<p>" + receive + "</p>";
+        str += "</div>";
+        str += "</div>";
+        str += "</div>";
+        temp.innerHTML = str
+        chats.append(temp);
+    }
+
+    const appendLEAVE = (leaveUserNickname) => {
+        let temp = document.createElement("div")
+        temp.className = "row justify-content-center";
+        temp.innerText = leaveUserNickname + " 님이 퇴장하셨습니다."
+        chats.append(temp);
     }
 </script>
 </body>
