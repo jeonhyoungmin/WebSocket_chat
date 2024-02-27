@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -48,6 +49,31 @@ public class ChatRoomService {
         } catch (Exception e) {
             throw new BaseException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
+    }
+
+    public void increaseCount(Long id) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id)
+                .orElseThrow(() -> new BaseException(ErrorCode.DATA_ACCESS_ERROR));
+        chatRoom.setCount(chatRoom.getCount() + 1);
+    }
+
+    public void decreaseCount(Long id, String nickname) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id)
+                .orElseThrow(() -> new BaseException(ErrorCode.DATA_ACCESS_ERROR));
+
+        try {
+            System.out.println("chatRoom.getUserAccount().getNickname() = " + chatRoom.getUserAccount().getNickname());
+            System.out.println("nickname = " + nickname);
+            if (chatRoom.getUserAccount().getNickname().equals(nickname)) {
+                chatRoomRepository.deleteById(id);
+            } else {
+                chatRoom.setCount(chatRoom.getCount() - 1);
+            }
+
+        } catch (Exception e) {
+            throw new BaseException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
+
     }
 
 }
